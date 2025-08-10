@@ -17,7 +17,7 @@ Previously known as the Rumble Raid Helper 🚀 A Chrome Extension to assist wit
 - - Button is now present on all screens without the need to refresh when live
   - API calls poll Rumble every 60 seconds to get LIVE status and most recent Follower/Subscriber/Gifted detail
   - Added a popup confirmation when the Raid Button is pressed
-  - - Checks to see if you are live and
+- - - Checks to see if you are live and
 
 ## Features
 - ALT + Right Click to raid directly on a LIVE Stream
