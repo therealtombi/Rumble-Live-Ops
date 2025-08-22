@@ -1,55 +1,111 @@
-# Rumble-Live-Ops  🚀
-An all in one Extension/Standalone App to assist any Content Creator or, Streamer that uses the Rumble Platform.
+# Rumble Live Ops (Raid Helper+) 🚀
 
-Previously known as the Rumble Raid Helper 🚀 A Chrome Extension to assist with Rumble streaming raids.
+A Chrome Extension to assist streamers on **Rumble** with raids, analytics, playlists, and streamlined live operations.
 
-## Change Log
-- v3.0 - Major rewrite
-  - Works in LIVE Stream, Rumble Studio DIRECT RTMP only 
-- v3.1 - Minor rewrite
-  - Reduces API Calls to absolute minimum when not LIVE
-- v3.2 - Minor rewrite
-  - Chat changes in Rumble Studio to make it easier to detect raids
-  - Bug fixes
-- v3.3 - Minor Update
-  - Added a popup confirmation to the button after being pressed
-- v3.4 - Minor Update
-  - Button is now present on all screens without the need to refresh when live
-  - API calls poll Rumble every 60 seconds to get LIVE status and most recent Follower/Subscriber/Gifted detail
-  - Added a popup confirmation when the Raid Button is pressed
-    - Checks to see if you are live and
+---
 
-## Features
-- ALT + Right Click to raid directly on a LIVE Stream
-- Raid Button added to menu in Rumble Studio
-- Compatible with Chrome, Brave, Edge, Opera, Opera GX, Vivaldi.  
-- Firefox (port coming soon)
+## 📜 Change Log
 
-## Installation for Chrome, Brave, Edge, Opera, Opera GX, Vivaldi
+-   **v4.0** – Major Rebuild & Feature Expansion
+    -   **Core Architecture**: Introduced **offscreen parsing** for more reliable and efficient data scraping from Rumble pages.
+    -   **Playlist Management**:
+        -   Added **Playlist Automator** to bulk "Set" and "Clear" playlists for multiple videos.
+        -   Implemented a progress bar to track bulk operations.
+    -   **Privacy & UX**:
+        -   Introduced **Streamer Mode** to blur or hide sensitive information (earnings, personal details) for safe screen-sharing.
+        -   Added **Gamify Dashboard** to provide visual progress overlays (stars, XP-style bars) on the 30-day earnings dashboard.
+    -   **Raid System Overhaul**:
+        -   Raid targets are now fetched primarily from the user's channel page, with a fallback to the `/following` page, ensuring accuracy.
+        -   Implemented an **Ownership Guard** to prevent accidental raids on channels you don't own.
+        -   The raid button's styling now adapts to its location (Rumble Studio vs. Live Stream page).
+    -   **UI Enhancements**:
+        -   Redesigned the options page with a more consistent and polished look.
+        -   Improved modals and popups for a cleaner user experience.
 
-### Load Unpacked:
-1. Download ZIP and Extract to Desktop
-2. Open Chrome, Edge, Brave, Opera, Opera GX
-3. Go to `chrome://extensions/` in address bar
-4. Enable **Developer Mode**
-5. Click **Load Unpacked**
-6. Select the `RumbleRaidHelper/` folder
-7. Open the RumbleRaidHelper Extension and goto Options
-8. Enter your Rumble API Key and Click "Save"
-9. Your Public Streams will now feature a RAID button.
-10. This will not appear for Private or, Unlisted Streams
+-   **v3.3** – UX Update
+    -   Added a popup confirmation after pressing the Raid button.
 
+-   **v3.2** – Chat Compatibility
+    -   Adjusted for Rumble Studio changes to raid/chat detection.
+    -   General bug fixes.
 
-## License
-Rumble Raid Helper - License Agreement
+-   **v3.1** – Minor Rewrite
+    -   Reduced API calls to a minimum when not live.
 
-Copyright (c) 2025 TheRealTombi
+-   **v3.0** – Major Rewrite
+    -   Enabled functionality in both **LIVE Stream** and **Rumble Studio** (Direct RTMP only).
 
-Permission is granted to use, copy, modify, and share this software
-for personal, educational, and non-commercial purposes only.
+---
 
-You may not:
-- Sell, license, or distribute this software or derivatives for profit.
-- Use it in any commercial application or product.
+## ⚡ Features
 
-This software is provided "as is", without warranty of any kind.
+-   **Raid Button**: Automatically added to the **Rumble Studio** and **Live Stream header**.
+-   **Ownership Verification**: Prevents attempting raids on streams you don’t own.
+-   **Stream Status Detection**: Detects both **Live** and **Scheduled** streams with accurate status display.
+-   **Centralized Modals**: A clean, center-screen modal for raid target selection and other interactions.
+-   **Gamify Dashboard**: Adds XP-style stars and a multi-tier progress meter to your earnings dashboard.
+-   **Streamer Mode**: Blurs, hides, and secures sensitive on-screen information for privacy.
+-   **Playlist Automator**: Apply or clear playlists across multiple videos in bulk.
+-   **Video Harvester**: Fetches your entire video catalog from Rumble for local management.
+-   **Cross-Browser Support**:
+    -   Chrome
+    -   Brave
+    -   Edge
+    -   Opera / Opera GX
+    -   Vivaldi
+    -   (Firefox port in progress 🔧)
+
+---
+
+## 🛠 User Functions
+
+Once installed and configured, you’ll have access to:
+
+### 🎯 Raids
+
+-   **Raid Button**: A dedicated button is added to the UI in both Rumble Studio and on Live Stream pages for easy access.
+-   **Ownership Guard**: The raid functionality is only enabled on streams you own, preventing accidental raids.
+
+### 🎥 Stream Status
+
+-   Detects your **Next Scheduled Stream** and **Currently Live** stream.
+-   The options page displays metadata for your upcoming or live stream with a direct link.
+
+### 📂 Playlists
+
+-   **Harvest Playlists**: Fetches all playlists associated with your channel.
+-   **Bulk Playlist Apply**: Add selected videos to one or more playlists at once.
+-   **Clear All Playlists**: Remove selected videos from all playlists they belong to.
+
+### 📺 Video Harvest
+
+-   **Fetch All Videos**: Pulls a complete list of your videos from Rumble.
+-   Stores the video list locally for faster operations.
+
+### 🎮 Gamify Dashboard
+
+-   Adds visual progress indicators like stars and multi-level progress bars on the `/account/dashboard?interval=30` page.
+-   This feature can be toggled in the Options.
+
+### 🛡 Streamer Mode
+
+-   Obscures sensitive information like earnings, payment details, and verified phone numbers.
+-   Ideal for maintaining privacy while streaming or screen-sharing your account pages.
+
+### 🔔 Alerts
+
+-   Provides clear feedback through center-screen popups and top-right toast messages.
+-   Includes optional audio alerts for incoming raids and rants.
+
+---
+
+## 📦 Installation for Chrome / Brave / Edge / Opera / Vivaldi
+
+1.  Download the ZIP file and extract it to a local folder.
+2.  Open your browser's extension management page (e.g., `chrome://extensions`).
+3.  Enable **"Developer mode"**.
+4.  Click **"Load unpacked"** and select the folder where you extracted the files.
+
+## 📦 Working and Tested
+
+1.  Please review `RLO_UAT.md` for a complete list of tested features and their status.

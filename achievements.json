@@ -1,0 +1,9 @@
+[
+    {
+        "id": "anotherstreamer",
+        "streamer": "AnotherStreamer",
+        "image": "images/achievements/another.png",
+        "position": 2,
+        "unlocked": false
+    }
+]

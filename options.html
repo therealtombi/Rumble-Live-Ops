@@ -1,0 +1,829 @@
+<!--
+  Rumble Live Ops - options.html
+  Version: v4.0.0
+  Description: Main Options/Settings UI page for RLO.
+
+  Core responsibilities
+  ─────────────────────
+  • Layout & Styling
+    - Dark theme with gold/green highlights, responsive grid layout.
+    - Uses Google Fonts “Black Ops One” for heading branding.
+    - Utility classes: cards, accordions, list rows, modals, switches, toast notifications.
+
+  • Top-level structure
+    - Header: Title “Rumble Live Ops” + quick-links nav (Next Live Stream, Studio, Dashboard, Campaigns, Category Submissions).
+    - .dashboard-grid → 4-column responsive layout (collapses on <1100px).
+
+  • Left column
+    - Welcome card: overview text.
+    - Functions card: master feature toggles (Streamer Mode, Raid Buttons, Followers, Gifted Subs, Gamify Dashboard, Hide Campaigns, Chat Styling, Chat Enhancements, Clips Command).
+
+  • Middle columns
+    - Background Manager: upload/manage/select background images.
+    - Sounds Manager: upload/manage raid & rant sounds.
+    - Video & Playlist Manager (accordion): toolbar + list of user videos.
+    - My Playlists (accordion): list of playlists fetched via API.
+
+  • Right column
+    - API & User card:
+      • Input for Rumble API key, Save button.
+      • Fetch Playlists & Harvest Videos buttons.
+      • Verification Info (username, follower count, livestream status, scheduled time, ID).
+    - Simulate & Maintenance card:
+      • Buttons for simulating RAID/RANT, testing popup, resetting advert filters.
+      • Help text for simulations and filter reset.
+
+  • Full-width row
+    - Lists Section (accordion groups):
+      • Recent Followers
+      • Recent Subscribers
+      • Recent Gifted Subs
+
+  • Playlist Modal (overlay dialog)
+    - Manage Playlists modal with filter/search, select all, clear, cancel/apply actions.
+    - Accessible roles/aria attributes for usability.
+
+  • Scripts
+    - kofi-widget.js (support/donation integration).
+    - options.js (main options page logic).
+    - options_inline.js (additional inline handlers).
+
+  Author: TheRealTombi
+  Website: https://rumble.com/TheRealTombi
+  License: MIT
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rumble Live Ops Options</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap');
+
+      :root {
+        --dark-bg: #0f1419;
+        --card-bg: #182029;
+        --border-color: #2a3440;
+        --text-light: #f0f0f0;
+        --text-muted: #9babbb;
+        --gold: #eab308;
+        --green: #4ade80;
+        --danger: #ef4444;
+        --container-max: 1400px;
+        --gap: 18px;
+      }
+
+      * {
+        box-sizing: border-box
+      }
+
+      body {
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+        color: var(--text-light);
+        margin: 0;
+        background:
+          radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.65)),
+          url('images/bg.jpg') center/cover fixed no-repeat;
+        background-blend-mode: multiply;
+      }
+
+      .container {
+        width: 94%;
+        max-width: var(--container-max);
+        margin: 0 auto;
+        padding: 22px 0 40px
+      }
+
+      h1 {
+        font-family: 'Black Ops One', system-ui, sans-serif;
+        font-size: clamp(28px, 3.2vw, 44px);
+        text-align: center;
+        letter-spacing: 1px;
+        color: var(--gold);
+        margin: 4px 0 10px;
+      }
+
+      .quick-links {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0 0 16px;
+      }
+
+      .quick-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 999px;
+        text-decoration: none;
+        color: var(--text-light);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .quick-links a:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        margin: 0 0 12px;
+        color: var(--text-light)
+      }
+
+      h3 {
+        font-size: 1rem;
+        margin: 0 0 8px;
+        color: var(--text-light)
+      }
+
+      p.help {
+        color: var(--text-muted);
+        margin: 6px 0 0
+      }
+
+      .dashboard-grid {
+        display: grid;
+        gap: var(--gap);
+        align-items: start;
+        grid-template-columns: 1fr 1.25fr 1.25fr 1fr;
+      }
+
+      .grid-left {
+        grid-column: 1
+      }
+
+      .grid-middle-span2 {
+        grid-column: 2 / span 2
+      }
+
+      .grid-right {
+        grid-column: 4
+      }
+
+      .grid-full {
+        grid-column: 1 / -1
+      }
+
+      @media (max-width: 1100px) {
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .grid-left,
+        .grid-middle-span2,
+        .grid-right,
+        .grid-full {
+          grid-column: 1
+        }
+      }
+
+      .card {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        padding: 18px;
+        backdrop-filter: blur(3px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      }
+
+      .section-gap {
+        margin-top: 16px;
+      }
+
+      .spacer {
+        height: 16px;
+      }
+
+      .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 8px
+      }
+
+      label {
+        color: var(--text-muted)
+      }
+
+      input[type="password"],
+      input[type="text"],
+      input[type="file"],
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background: #0c1116;
+        color: var(--text-light);
+      }
+
+      button {
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 10px 14px;
+        font-weight: 600;
+        color: #111;
+        background: var(--gold);
+      }
+
+      button.secondary {
+        background: #314355;
+        color: var(--text-light)
+      }
+
+      button.ghost {
+        background: transparent;
+        color: var(--text-light);
+        border: 1px solid var(--border-color)
+      }
+
+      /* full-width button utility for cards */
+      .btn-block {
+        display: block;
+        width: 100%;
+      }
+
+      .btn-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .function-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 12px
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 28px;
+        flex-shrink: 0
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #495a6a;
+        border-radius: 28px;
+        transition: .25s;
+      }
+
+      .slider:before {
+        content: "";
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        left: 4px;
+        bottom: 4px;
+        background: #fff;
+        border-radius: 50%;
+        transition: .25s;
+      }
+
+      input:checked+.slider {
+        background: var(--green)
+      }
+
+      input:checked+.slider:before {
+        transform: translateX(22px)
+      }
+
+      .readonly {
+        background: #0c1116;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px;
+        color: var(--text-light);
+        word-wrap: break-word
+      }
+
+      .accordion {
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #0c1116
+      }
+
+      .accordion+.accordion {
+        margin-top: 10px
+      }
+
+      .accordion-header {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text-light);
+        padding: 12px 14px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        font-size: 1.05rem;
+      }
+
+      .accordion-header::after {
+        content: '\25B6';
+        float: right;
+        transition: transform .2s
+      }
+
+      .accordion-header.active::after {
+        transform: rotate(90deg)
+      }
+
+      .accordion-panel {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .25s ease-out
+      }
+
+      .accordion-panel .card {
+        border-radius: 0;
+        border: 0;
+        border-top: 1px solid var(--border-color)
+      }
+
+      .video-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .video-toolbar input[type="text"] {
+        max-width: 300px
+      }
+
+      .list-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .list-row {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 8px 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+      }
+
+      .list-row .thumb {
+        width: 80px;
+        height: 45px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #0c1116;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .list-row .thumb img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .list-row .title {
+        margin-left: 4px;
+      }
+
+      .list-row .title a {
+        color: var(--text-light);
+        text-decoration: none;
+      }
+
+      .list-row .meta {
+        color: var(--text-muted);
+        font-size: .9em;
+      }
+
+      .list-row .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .toast-container {
+        position: fixed;
+        top: 12px;
+        right: max(12px, calc((100vw - var(--container-max)) / 2 + 12px));
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .toast {
+        background: #0c1116;
+        border: 1px solid var(--border-color);
+        color: var(--text-light);
+        padding: 10px 12px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        min-width: 260px;
+      }
+
+      .toast.success {
+        border-color: #2b7a42
+      }
+
+      .toast.error {
+        border-color: #ff0000
+      }
+
+      .toast.info {
+        border-color: #2b4c7a
+      }
+
+      .simple-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px
+      }
+
+      .simple-row {
+        display: grid;
+        grid-template-columns: 56px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 8px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .simple-row .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .chip {
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal {
+        width: min(780px, 92vw);
+        max-height: 80vh;
+        background: #0c1116;
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .modal-title {
+        font-size: 1.1rem;
+        margin: 0;
+        color: var(--text-light);
+      }
+
+      .modal-close {
+        border: 1px solid var(--border-color);
+        background: transparent;
+        color: var(--text-light);
+        border-radius: 8px;
+        padding: 6px 10px;
+        cursor: pointer
+      }
+
+      .modal-content {
+        padding: 12px 14px;
+        overflow: auto;
+        flex: 1;
+      }
+
+      .modal-toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 12px 14px;
+        border-top: 1px solid var(--border-color);
+        flex-shrink: 0;
+      }
+
+      .checkbox-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .checkbox-row input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
+
+      .micro {
+        font-size: .9em;
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="toast-container"></div>
+    <div class="container">
+      <h1>Rumble Live Ops</h1>
+      <nav class="quick-links" aria-label="Quick links">
+        <a id="next-live-link" href="#" target="_blank" rel="noopener" title="Next live stream">Next Live Stream</a>
+        <a href="https://studio.rumble.com/home" target="_blank" rel="noopener">Rumble Studio</a>
+        <a href="https://rumble.com/account/dashboard?type=earnings&interval=30" target="_blank" rel="noopener">Dashboard</a>
+        <a href="https://studio.rumble.com/campaigns" target="_blank" rel="noopener">Campaigns</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe4OHXIaQGztjvxS_4VUT3-dQMsEGE6y_BB6IsdB4ycA18HjA/viewform?pli=1" target="_blank" rel="noopener">Category Submissions</a>
+      </nav>
+      <div class="dashboard-grid">
+        <div class="grid-left">
+          <div id="welcome-card" class="card">
+            <h2>Extension Features</h2>
+            <p class="help"> Manage your live tools, playlists, and videos. Toggle features on/off and fetch data with your Rumble API key. </p>
+          </div>
+          <div class="spacer"></div>
+          <div id="functions-card" class="card">
+            <h2>Enable Functions</h2>
+            <div class="function-toggle">
+              <label for="enable-streamer-mode">Streamer Mode</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-streamer-mode">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-raid-button-live">Raid Button on Live Streams</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-raid-button-live">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-gifted-live">Gifted Subs on Live Stream</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-gifted-live">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-followers-live">Followers on Live Stream</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-followers-live">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-raid-button-studio">Raid Button on Rumble Studio</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-raid-button-studio">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-followers-studio">Followers on Rumble Studio</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-followers-studio">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-gamify-dashboard">Gamify Dashboard</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-gamify-dashboard">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-hide-campaigns">Hide Campaigns (per advertiser)</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-hide-campaigns">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-chat-styling">Raid/Rant Enhancement in Rumble Studio</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-chat-styling">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-chat-enhancements">Enable Chat Timestamps & Layout</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-chat-enhancements">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="function-toggle">
+              <label for="enable-clips-command">Enable Clips Command</label>
+              <label class="switch">
+                <input type="checkbox" id="enable-clips-command">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="grid-middle-span2">
+          <div id="bg-manager" class="card">
+            <h2>Background Images Manager</h2>
+            <div class="form-section">
+              <input type="file" id="bg-image-input" accept="image/*" />
+              <div style="display:flex; gap:10px;">
+                <button class="secondary" id="add-bg-btn">Add Image</button>
+                <button class="ghost" id="reset-bg-default-btn">Use Default Background</button>
+              </div>
+              <p class="help">Upload multiple backgrounds, select one as default, or delete.</p>
+            </div>
+            <div id="bg-list" class="simple-list"></div>
+          </div>
+          <div id="sounds-manager" class="card section-gap">
+            <h2>Custom Sounds Manager</h2>
+            <h3>Raid Sounds</h3>
+            <div class="form-section">
+              <input type="file" id="raid-sound-input" accept="audio/*" />
+              <button class="secondary" id="add-raid-sound-btn">Add Raid Sound</button>
+              <p class="help">Upload multiple raid sounds, select one as default, play/delete.</p>
+            </div>
+            <div id="raid-sounds-list" class="simple-list"></div>
+            <h3 style="margin-top:16px;">Rant Sounds</h3>
+            <div class="form-section">
+              <input type="file" id="rant-sound-input" accept="audio/*" />
+              <button class="secondary" id="add-rant-sound-btn">Add Rant Sound</button>
+              <p class="help">Upload multiple rant sounds, select one as default, play/delete.</p>
+            </div>
+            <div id="rant-sounds-list" class="simple-list"></div>
+          </div>
+          <div id="video-manager-section" class="card section-gap" style="display:none;">
+            <button class="accordion-header">Video &amp; Playlist Manager</button>
+            <div class="accordion-panel">
+              <div class="card">
+                <div id="video-toolbar" class="video-toolbar"></div>
+                <div id="video-list-container" class="list-rows" style="margin-top:12px;"></div>
+              </div>
+            </div>
+          </div>
+          <div id="playlists-section" class="card section-gap" style="display:none;">
+            <button class="accordion-header">My Playlists</button>
+            <div class="accordion-panel">
+              <div class="card" id="playlists-container" class="list-rows"></div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-right">
+          <div id="api-card" class="card">
+            <h2>API &amp; User</h2>
+            <div class="form-section">
+              <label for="apiKey">Your Rumble API Key</label>
+              <input type="password" id="apiKey" placeholder="Paste your API key here..." />
+              <button id="save">Save Key</button>
+              <button id="fetch-playlists-btn" style="margin-top:10px;">Fetch Playlists</button>
+              <button id="harvest-videos-btn" style="margin-top:10px;">Fetch All My Videos</button>
+              <p id="video-harvest-status" style="display:none;"></p>
+              <p id="status" style="display:none;"></p>
+            </div>
+            <div id="verification-info" style="display:none;">
+              <h3>Verification Info</h3>
+              <label>Username</label>
+              <div id="username" class="readonly">-</div>
+              <label>Follower Count</label>
+              <div id="followers_count" class="readonly">-</div>
+              <h3 style="margin-top:12px">Livestream</h3>
+              <label>Status</label>
+              <div id="livestream-status" class="readonly">-</div>
+              <label>Scheduled</label>
+              <div id="livestream-scheduled" class="readonly">-</div>
+              <label>Livestream ID</label>
+              <div id="livestream-id" class="readonly">-</div>
+            </div>
+          </div>
+          <div id="simulate-maintenance-card" class="card section-gap">
+            <h2>Simulate &amp; Maintenance</h2>
+            <div class="btn-stack" aria-label="Simulation and maintenance actions">
+              <button id="test-raid-btn" class="btn-block">Simulate Received RAID</button>
+              <button id="test-rant-btn" class="btn-block">Simulate Received RANT</button>
+              <button id="test-status-popup-btn" class="btn-block">Test RAID Popup</button>
+              <button id="reset-advert-filters-btn" class="btn-block" title="Un-hide all advertisers">Reset Advert Filters</button>
+            </div>
+            <p class="help" style="margin-top:10px;"> Simulations send a pseudo message/sound to the active Rumble Studio/Live tab. Reset Advert Filters clears your hidden advertisers so all campaigns reappear. </p>
+          </div>
+        </div>
+        <div class="grid-full">
+          <div id="lists-section" class="card" style="display:none;">
+            <h2>Recent Activity</h2>
+            <div class="accordion">
+              <button class="accordion-header">Recent Followers</button>
+              <div class="accordion-panel">
+                <div class="card">
+                  <div id="followers-list" class="list-rows"></div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion">
+              <button class="accordion-header">Recent Subscribers</button>
+              <div class="accordion-panel">
+                <div class="card">
+                  <div id="subscribers-list" class="list-rows"></div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion">
+              <button class="accordion-header">Recent Gifted Subs</button>
+              <div class="accordion-panel">
+                <div class="card">
+                  <div id="gifted-subs-list" class="list-rows"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="playlist-modal-overlay" class="modal-overlay" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="playlist-modal-title">
+          <div class="modal-header">
+            <h3 id="playlist-modal-title" class="modal-title">Manage Playlists</h3>
+            <button id="playlist-modal-close" class="modal-close" aria-label="Close">✕</button>
+          </div>
+          <div class="modal-content">
+            <div class="modal-toolbar">
+              <input type="text" id="playlist-filter-input" placeholder="Filter playlists by name..." />
+              <button class="secondary" id="playlist-select-all">Select All</button>
+              <button class="ghost" id="playlist-clear">Clear</button>
+              <span class="micro" id="playlist-selection-status" style="margin-left:auto;"></span>
+            </div>
+            <div id="playlist-modal-empty" class="help" style="display:none;">No playlists yet. Click “Fetch Playlists”.</div>
+            <div id="playlist-modal-list" class="checkbox-list"></div>
+          </div>
+          <div class="modal-actions">
+            <button class="ghost" id="playlist-cancel">Cancel</button>
+            <button id="playlist-apply">Apply to selected videos</button>
+          </div>
+        </div>
+      </div>
+      <script src="scripts/kofi-widget.js"></script>
+      <script src="options.js"></script>
+      <script src="options_inline.js"></script>
+  </body>
+</html>

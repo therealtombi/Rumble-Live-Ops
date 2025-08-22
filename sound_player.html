@@ -1,0 +1,30 @@
+<!--
+  Rumble Raid Helper - sound_player.html
+  Version: v4.0.0
+  Description: Minimal HTML wrapper for the Raid/Rant sound player.
+  
+  Core responsibilities
+  ─────────────────────
+  • Loads and runs sound_player.js, which:
+    – Extracts ?src= parameter from the URL.
+    – Plays the referenced audio file.
+    – Closes the popup when playback finishes or fails.
+  
+  • This file itself:
+    – Provides a bare <html> shell with no UI.
+    – Ensures sound_player.js runs in a clean, isolated context.
+    – Used by the extension to play sounds in a popup window.
+
+  Author: TheRealTombi
+  Website: https://rumble.com/TheRealTombi
+  License: MIT
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <script src="sound_player.js"></script>
+  </body>
+</html>

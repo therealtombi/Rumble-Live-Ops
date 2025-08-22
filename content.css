@@ -1,0 +1,731 @@
+/*!
+ * Rumble Live Ops - content.css
+ * Version: v4.0.0
+ * Description: CSS stylesheet that defines the UI/UX for RLO overlays, popups, buttons, 
+ *              and injected elements inside Rumble pages.
+ *
+ * Core responsibilities
+ * ─────────────────────
+ * • Raid UI
+ *   - #raid-button → floating pill-shaped button
+ *   - .raid-popup (+ header, close, list, target buttons, avatars) → raid target selection modal
+ *   - .chat-pinned-ui__raid-* → styling for raid confirm popup embedded in chat UI
+ *
+ * • Studio / Actions
+ *   - .studio-button → gold “action” button in raid popup
+ *   - #raid-confirm-popup-wrapper / #raid-confirm-popup → full-screen raid confirmation overlay
+ *
+ * • Raid incoming notifications
+ *   - .rr-incoming-raid-popup → styled box with avatar, content, close button
+ *   - .rr-raid-avatar / .rr-raid-content → avatar + message styling
+ *   - Animations: slideInFromRight
+ *
+ * • Loading / Progress overlays
+ *   - .rr-loading-overlay / .rr-loading-content → centered darkened modal with spinner + close
+ *   - .rr-loading-spinner → animated circular spinner (spin keyframes)
+ *   - .rr-loading-message → text under spinner
+ *
+ * • Info popup
+ *   - .rr-info-popup → centered informational dialog
+ *   - .rr-popup-with-logo-bg::before → watermark background with extension’s logo
+ *
+ * • Tooltip + follower UI
+ *   - .rr-tooltip-container + .rr-tooltip-text → hover tooltips (with arrow)
+ *   - #follower-button + .rr-follower-dropdown → hoverable dropdown with follower list
+ *
+ * • Campaigns / Hide Ads
+ *   - .rr-hide-ad-container → checkbox + label row for hiding ads
+ *
+ * • Dashboard widgets
+ *   - .rr-dashboard-container / .rr-dashboard-widget → modular stat widgets (title, content, list)
+ *
+ * • Live Rant overlays
+ *   - .rr-live-rant (+ head, avatar, user-info, username, price, text) → styled chat rant/“superchat” block
+ *
+ * • Resize handle
+ *   - .rr-resize-handle → draggable bottom-right corner for resizable injected panels
+ *
+ * • Faux chat rendering
+ *   - .rlo-faux-chat-row → simulated chat rows for preview/testing
+ *   - .rlo-faux-badge / .rlo-faux-user / .rlo-faux-text → fake badge, username, text styling
+ *
+ * • Animations / effects
+ *   - fadeIn → popup intro animation
+ *   - rr-pop-glow → pulsing button animation
+ *   - rlo-flash-white / .rlo-flash → attention-grabbing flash effect for buttons
+ *
+ * Key visual constants
+ *   - Uses Rumble’s brand green (#85c742) and gold (#f7a01a) highlights
+ *   - Dark theme backgrounds (#1b2127 / #222 / #283139) with rounded corners and shadows
+ *
+ * Author: TheRealTombi
+ * Website: https://rumble.com/TheRealTombi
+ * License: MIT
+ */
+
+
+#raid-button {
+	margin-left: 10px;
+	padding: 5px 10px;
+	font-size: 14px;
+	background: rgb(16, 20, 23);
+	color: white;
+	border: none;
+	cursor: pointer;
+	border-radius: 9999px;
+}
+
+.raid-popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 350px;
+	max-height: 80vh;
+	background: #222;
+	color: white;
+	border-radius: 10px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+	z-index: 99999;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	animation: fadeIn 0.3s ease-in-out;
+	border: 2px solid red;
+}
+
+.raid-popup-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #333;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.raid-popup-header h3 {
+	margin: 0;
+	font-size: 1.2em;
+}
+
+#raid-popup-close {
+	background: none;
+	border: none;
+	color: #ddd;
+	font-size: 1.5em;
+	cursor: pointer;
+}
+
+.raid-list {
+	overflow-y: auto;
+	flex-grow: 1;
+	padding-right: 5px;
+}
+
+.raid-target-button {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	background: #333;
+	color: white;
+	border: none;
+	padding: 8px;
+	margin-bottom: 5px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.raid-target-button:hover {
+	background-color: #444;
+}
+
+.raid-target-avatar {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	margin-right: 10px;
+}
+
+.studio-button {
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+	background-color: #f7a01a;
+	color: white;
+	font-weight: bold;
+	border-radius: 9999px;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.studio-button:hover {
+	background-color: #e08e17;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -60%);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%);
+	}
+}
+
+.chat-pinned-ui__raid-confirm-button-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 15px;
+}
+
+.btn {
+	all: unset;
+	padding: 8px 16px;
+	font-size: 13px;
+	font-weight: bold;
+	border-radius: 6px;
+	cursor: pointer;
+	text-align: center;
+	line-height: 1.5;
+}
+
+.btn-xs {
+	font-size: 12px;
+	padding: 6px 12px;
+}
+
+.btn-green {
+	background-color: var(--brand-500, #85c742);
+	color: var(--white, #fff);
+}
+
+.btn-grey {
+	background-color: #444;
+	color: white;
+}
+
+.btn-green:hover {
+	background-color: #a4e662;
+}
+
+.btn-grey:hover {
+	background-color: #555;
+}
+
+.chat-pinned-ui__raid-confirm-header {
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.chat-pinned-ui__raid-content-message {
+	font-size: 13px;
+	margin-top: 5px;
+}
+
+.chat-pinned-ui__raid-confirm-link {
+	color: var(--brand-500, #85c742);
+	text-decoration: none;
+}
+
+.chat-pinned-ui__raid-confirm-link:hover {
+	text-decoration: underline;
+}
+
+#raid-confirm-popup-wrapper {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 999999;
+}
+
+#raid-confirm-popup {
+	background: #222;
+	color: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+	border: 1px solid #444;
+}
+
+
+.rr-incoming-raid-popup {
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 10px 15px;
+	margin: 4px 0;
+	border-radius: 8px;
+	background-color: #2C3640;
+	background-image: url('https://rumble.com/i/bg-raid-message-space.png');
+	background-size: cover;
+	background-position: center;
+	color: var(--white);
+	border: 1px solid #495a6a;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.rr-raid-avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	margin-right: 15px;
+	flex-shrink: 0;
+	
+	/* Styles for the fallback avatar */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 24px;
+	font-weight: bold;
+	color: white;
+}
+
+.rr-raid-content {
+	font-size: 15px;
+	line-height: 1.4;
+	color: white;
+}
+
+.rr-raid-content a:hover {
+	text-decoration: underline;
+}
+
+.rr-incoming-raid-close {
+	position: absolute;
+	top: 5px;
+	right: 8px;
+	background: none;
+	border: none;
+	color: rgba(255, 255, 255, 0.7);
+	font-size: 1.8em;
+	cursor: pointer;
+	line-height: 1;
+}
+.rr-incoming-raid-close:hover {
+	color: white;
+}
+
+@keyframes slideInFromRight {
+	from {
+		transform: translateX(110%);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
+}
+
+.rr-loading-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.75);
+	z-index: 999998;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	backdrop-filter: blur(5px);
+}
+
+.rr-loading-content {
+	position: relative;
+	color: white;
+	text-align: center;
+	padding: 30px;
+	border-radius: 10px;
+	background: #283139;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+	width: 350px;
+	min-height: 150px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.rr-loading-close {
+	position: absolute;
+	top: 8px;
+	right: 12px;
+	background: none;
+	border: none;
+	color: #aaa;
+	font-size: 2em;
+	font-weight: bold;
+	cursor: pointer;
+	line-height: 1;
+	transition: color 0.2s;
+}
+.rr-loading-close:hover {
+	color: white;
+}
+
+.rr-loading-spinner {
+	width: 50px;
+	height: 50px;
+	border: 5px solid rgba(255, 255, 255, 0.3);
+	border-top-color: #85c742; /* Rumble Green */
+	border-radius: 50%;
+	margin: 0 auto 20px auto;
+	animation: spin 1s linear infinite;
+}
+
+.rr-loading-message {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin: 0;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.rr-info-popup {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 350px;
+	padding: 30px;
+	background: #283139;
+	color: white;
+	border: 1px solid var(--gray-700, #495a6a);
+	border-radius: 10px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+	z-index: 100001;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.rr-button-pulse {
+	animation: rr-pop-glow 0.6s ease-in-out 3;
+}
+
+@keyframes rr-pop-glow {
+	0% {
+		transform: scale(1);
+		background-color: var(--color-primary, #74cc1d); 
+	}
+	50% {
+		transform: scale(1.15); 
+		background-color: #ffffff; 
+		box-shadow: 0 0 15px 5px #ffffff; 
+	}
+	100% {
+		transform: scale(1);
+		background-color: var(--color-primary, #74cc1d);
+	}
+}
+
+#gifted-subs-button {
+	margin-left: 8px;
+	cursor: help;   
+	min-width: 48px;
+	color: white;
+}
+
+.rr-tooltip-container {
+	position: relative;
+	display: inline-block;
+}
+
+.rr-tooltip-text {
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+
+	width: 180px;
+	background-color: #1b2127;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 8px;
+	position: absolute;
+	z-index: 1;
+	top: 125%;
+	left: 50%;
+	transform: translateX(-50%);
+	white-space: nowrap;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.rr-tooltip-text::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: transparent transparent #1b2127 transparent;
+}
+
+.rr-tooltip-container:hover .rr-tooltip-text {
+	visibility: visible;
+	opacity: 1;
+}
+
+#follower-button {
+	position: relative;
+	margin-left: 8px;
+	cursor: default;
+	color: white;
+}
+
+.rr-follower-dropdown {
+	display: none;
+	position: absolute;
+	top: 110%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 220px;
+	background-color: #1b2127;
+	border: 1px solid #495a6a;
+	border-radius: 6px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+	z-index: 10;
+	padding: 5px 0;
+}
+
+#follower-button:hover .rr-follower-dropdown {
+	display: block;
+}
+
+.rr-follower-dropdown-item {
+	color: white;
+	padding: 8px 15px;
+	font-size: 14px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.rr-hide-ad-container {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(131, 151, 170, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 8px;
+	color: var(--color-ice, #8397aa);
+	font-size: 14px;
+}
+
+.rr-hide-ad-container input {
+	cursor: pointer;
+}
+
+.rr-hide-ad-container label {
+	cursor: pointer;
+	user-select: none;
+	color: white;
+}
+
+.rr-dashboard-container {
+	display: flex;
+	gap: 15px;
+	padding: 10px;
+	margin: 10px 0;
+	background-color: rgba(27, 33, 39, 0.8);
+	border-radius: 8px;
+	border: 1px solid #283139;
+}
+
+.rr-dashboard-widget {
+	flex: 1;
+	background-color: rgba(16, 20, 23, 0.5);
+	padding: 15px;
+	border-radius: 6px;
+	text-align: center;
+}
+
+.rr-dashboard-widget-title {
+	font-size: 14px;
+	font-weight: bold;
+	color: var(--gray-300, #9babbb);
+	margin-bottom: 10px;
+	text-transform: uppercase;
+}
+
+.rr-dashboard-widget-content {
+	font-size: 28px;
+	font-weight: bold;
+	color: var(--white, #fff);
+}
+
+.rr-dashboard-widget-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	font-size: 15px;
+	color: var(--gray-100, #ccd4dc);
+}
+
+.rr-dashboard-widget-list li {
+	padding: 4px 0;
+	border-bottom: 1px solid #283139;
+}
+
+.rr-dashboard-widget-list li:last-child {
+	border-bottom: none;
+}
+
+.rr-live-rant {
+	position: relative;
+	padding: 12px;
+	margin: 4px 0;
+	border-radius: 8px;
+	background-color: var(--gray-900, #283139);
+	border: 1px solid var(--brand-500, #85c742);
+	box-shadow: 0 0 10px rgba(133, 199, 66, 0.3);
+}
+
+.rr-live-rant-head {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+
+.rr-live-rant-avatar {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	font-weight: bold;
+	color: white;
+}
+
+.rr-live-rant-user-info {
+	flex-grow: 1;
+}
+
+.rr-live-rant-username {
+	font-weight: bold;
+	color: var(--white, #fff);
+	font-size: 16px;
+}
+
+.rr-live-rant-price {
+	font-weight: bold;
+	color: var(--brand-300, #aeda81);
+	font-size: 14px;
+}
+
+.rr-live-rant-text {
+	font-size: 16px;
+	color: var(--gray-50, #e4e8ec);
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.rr-popup-with-logo-bg {
+    /* This class is a hook for its ::before pseudo-element. */
+    /* The position: relative is not needed here because the */
+    /* .rr-info-popup already establishes a positioning context */
+    /* with position: fixed. */
+}
+
+.rr-popup-with-logo-bg::before {
+    content: '';
+    position: absolute;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/images/rumble-logo.svg');
+    background-size: 75% auto; 
+    background-position: center;
+}
+
+.rr-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(133, 199, 66, 0.7);
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    cursor: se-resize;
+    z-index: 100;
+}
+
+.rlo-faux-chat-row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .5rem .75rem;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    font-size: 14px;
+    line-height: 1.35;
+    background-color: #222;
+    color: white;
+}
+
+.rlo-faux-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    min-width: 24px;
+    padding: 0 .5rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    background: rgba(110,92,224,.25);
+    border: 1px solid rgba(110,92,224,.45);
+    color: white;
+}
+
+.rlo-faux-user {
+    font-weight: 700;
+    color: #85c742;
+}
+
+.rlo-faux-text {
+    opacity: .95;
+    color: white;
+}
+
+
+@keyframes rlo-flash-white {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    filter: brightness(1.2);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px 15px rgba(255, 255, 255, 0);
+    filter: brightness(1.5);
+  }
+}
+
+.rlo-flash {
+  animation: rlo-flash-white 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite !important;
+  position: relative !important; 
+  z-index: 2147483647 !important; 
+  background-color: rgb(var(--color-primary)) !important; 
+  border-radius: 9999px !important;
+  outline: 1px solid rgba(255, 255, 255, 0.8) !important;
+  outline-offset: 2px !important;
+}

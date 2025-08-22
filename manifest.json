@@ -1,0 +1,78 @@
+{
+    "manifest_version": 3,
+    "name": "Rumble Live Ops",
+    "version": "4.0.0",
+    "description": "Live tools, playlist automation, and quality-of-life features for Rumble.",
+    "permissions": [
+        "storage",
+        "scripting",
+        "tabs",
+        "offscreen",
+        "webNavigation"
+    ],
+    "host_permissions": [
+        "https://rumble.com/*",
+        "https://studio.rumble.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+
+    "content_scripts": [{
+            "matches": [
+                "https://rumble.com/account/profile",
+                "https://rumble.com/account/verification",
+                "https://rumble.com/account/recurring-subs",
+                "https://rumble.com/account/dashboard*"
+            ],
+            "js": ["streamer-precloak.js"],
+            "run_at": "document_start",
+            "all_frames": false
+        },
+        {
+            "matches": [
+                "https://rumble.com/*",
+                "https://studio.rumble.com/*"
+            ],
+            "css": ["content.css"],
+            "js": ["content.js"],
+            "run_at": "document_idle",
+            "all_frames": true,
+            "match_about_blank": true
+        }
+    ],
+
+    "options_page": "options.html",
+
+    "icons": {
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+
+    "action": {
+        "default_icon": {
+            "48": "icons/icon48.png"
+        },
+        "default_title": "Rumble Live Ops"
+    },
+
+    "offscreen_document": "offscreen.html",
+
+    "web_accessible_resources": [{
+        "resources": [
+            "content.css",
+            "sounds/raid_alert.mp3",
+            "sounds/rant_alert.mp3",
+            "images/rumble-logo.svg",
+            "dashboard-gamify.js",
+            "streamer-mode.js"
+        ],
+        "matches": [
+            "https://rumble.com/*",
+            "https://studio.rumble.com/*"
+        ]
+    }],
+
+    "author": "TheRealTombi",
+    "homepage_url": "https://rumble.com/user/TheRealTombi"
+}
