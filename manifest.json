@@ -5,6 +5,7 @@
     "description": "Live tools, playlist automation, and quality-of-life features for Rumble.",
     "permissions": [
         "storage",
+		"unlimitedStorage",
         "scripting",
         "tabs",
         "offscreen",
